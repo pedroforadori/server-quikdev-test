@@ -31,7 +31,7 @@ async function bootstrap() {
     })
 
     fastify.get('/guesses/count', async () => {
-        const count = await prisma.guesses.count()
+        const count = await prisma.guess.count()
         console.log("----------------", count)
         return { count }
     })
