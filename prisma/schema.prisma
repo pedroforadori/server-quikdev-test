@@ -14,58 +14,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Pool {
+model Post {
   id        String   @id @default(cuid())
   title     String
-  code      String   @unique
+  content   String
   createdAt DateTime @default(now())
-  ownerId String?
 
-  participants Participant[]
-  owner User? @relation(fields: [ownerId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  comment Comment[]
 }
 
-model Participant {
-  id  String   @id @default(cuid())
-  userId String
-  poolId String
+model Comment {
+  id      String  @id @default(cuid())
+  content String
+  userId  String
+  postId  String?
 
-  guesses Guess[]
-  user User @relation (fields: [userId], references: [id])
-  pool Pool @relation (fields: [poolId], references: [id])
-
-  @@unique([userId, poolId])
+  user User  @relation(fields: [userId], references: [id])
+  post Post? @relation(fields: [postId], references: [id])
 }
 
 model User {
-  id  String   @id @default(cuid())
-  name String
-  email String @unique
-  avatarUrl String?
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
   createdAt DateTime @default(now())
 
-  participatingAt Participant[]
-  ownPools Pool[]
-}
-
-model Game {
-  id  String   @id @default(cuid())
-  date DateTime
-  firstTeamCountryCode String
-  secondTeamCountryCode String
-
-  guesses Guess[]
-}
-
-model Guess {
-  id  String   @id @default(cuid())   
-  firstTeamPoints Int
-  secondTeamPoints Int
-  createdAt DateTime @default(now())
-  gameId String
-  participantId String
-
-  participant Participant @relation(fields: [participantId], references: [id])
-
-  game Game @relation(fields: [gameId], references: [id])
+  post    Post[]
+  comment Comment[]
 }
