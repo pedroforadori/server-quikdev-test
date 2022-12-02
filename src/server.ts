@@ -86,8 +86,6 @@ async function bootstrap() {
             })
             return reply.status(201).send(newUser)    
         }
-
-        
     })
 
     fastify.get('/user', async () => {
